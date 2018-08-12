@@ -74,7 +74,10 @@ class Ship_Us_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ship-us-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style( 'jquerydatatable',  plugin_dir_url( __FILE__ ) . 'css/jquery.dataTables.min.css' );
+		wp_enqueue_style( 'jquerydatatable-select', 'https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css' );
+		wp_enqueue_style( 'jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
+		wp_enqueue_style( 'datepicker', plugin_dir_url( __FILE__ ) . 'css/datepicker.min.css');
 	}
 
 	/**
@@ -96,8 +99,63 @@ class Ship_Us_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ship-us-admin.js', array( 'jquery' ), $this->version, false );
-
+		
+		wp_enqueue_script( 'jquerydatatable-js', plugin_dir_url(__FILE__) . 'js/jquery.dataTables.min.js', array('jquery'), '1.10.19', true );
+		wp_enqueue_script( 'datetime-js',  plugin_dir_url(__FILE__) . 'js/datepicker.min.js', array('jquery'), '1.0', true );
+		wp_enqueue_script('jquery-datatable-select', 'https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js', array('jquery'), '1.2.7', true);
+		wp_enqueue_script('jquery-simple-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js', array('jquery'), '0.9.1', true);
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ship-us-admin.js', array( 'jquery' ), $this->version, true );
 	}
 
+	public function register_admin_menu() {
+		add_menu_page( 'Manage Shipping Orders', 'Manage Orders', 'manage_options', 'shipus/manage-orders.php', array($this, 'render_admin_page'), 'dashicons-tickets', 9  );
+	}
+
+	public function render_admin_page() {
+		include_once dirname(__FILE__)."/partials/ship-us-admin-display.php";
+	}
+
+	public function call_new_order() {
+		$title = "Order mới";
+		include_once dirname(__FILE__). "/partials/ship-us-edit-order-form.php";
+		wp_die();
+	}
+
+	public function call_edit_order() {
+		$order = json_decode(str_replace("\\", "", $_POST['order']));
+		$title = 'Chỉnh sửa order ' . $order->ma_order;
+		include_once dirname(__FILE__). "/partials/ship-us-edit-order-form.php";
+		wp_die();
+	}
+
+	public function call_list_orders() {
+		Ship_Order_Service::list();
+	}
+
+	public function call_save_order() {
+		parse_str($_POST['data'],$data);
+		Ship_Order_Service::create($data);
+		if(!empty($data['_id'])) {
+
+		}
+		else {
+
+		}
+	}
+	public function call_edit_order_log() {
+		$title = 'Cập nhật trạng thái order';
+		$order_id = $_POST['order_id'];
+		include_once dirname(__FILE__) . "/partials/ship-us-order-log-form.php";
+		wp_die();
+	}
+
+	public function call_edit_save_log() {
+		parse_str($_POST['data'],$data);
+		Ship_Logs_Service::create($data);
+	}
+
+	public function call_delete_order() {
+		$order_id = $_POST['order_id'];
+		Ship_Order_Service::delete($order_id);
+	}
 }

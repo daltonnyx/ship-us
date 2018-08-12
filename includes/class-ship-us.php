@@ -122,6 +122,14 @@ class Ship_Us {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ship-us-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ship-order-model.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ship-order-service.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ship-logs-model.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ship-logs-service.php';
+
 		$this->loader = new Ship_Us_Loader();
 
 	}
@@ -156,7 +164,14 @@ class Ship_Us {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_admin_menu' );
+		$this->loader->add_action( 'wp_ajax_new_order', $plugin_admin, 'call_new_order');
+		$this->loader->add_action( 'wp_ajax_save_order', $plugin_admin, 'call_save_order');
+		$this->loader->add_action( 'wp_ajax_list_orders', $plugin_admin, 'call_list_orders');
+		$this->loader->add_action( 'wp_ajax_order_logs', $plugin_admin, 'call_edit_order_log');
+		$this->loader->add_action( 'wp_ajax_save_logs', $plugin_admin, 'call_edit_save_log');
+		$this->loader->add_action( 'wp_ajax_edit_order', $plugin_admin, 'call_edit_order');
+		$this->loader->add_action( 'wp_ajax_remove_order', $plugin_admin, 'call_delete_order');
 	}
 
 	/**

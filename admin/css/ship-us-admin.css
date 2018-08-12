@@ -2,3 +2,24 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+ .toolbox ul {
+     display: flex;
+ }
+
+ .toolbox ul li {
+     margin-right: 1em;
+ }
+
+ .col {
+     display: inline-block;
+ }
+ .col-3 {
+     width: 32.3332%;
+ }
+
+ .width-50 {
+     width: 49.5%;
+     display: inline-block;
+     vertical-align: top;
+ }

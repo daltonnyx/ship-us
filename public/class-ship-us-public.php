@@ -51,7 +51,8 @@ class Ship_Us_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		add_shortcode('order_search', array($this, 'render_search_box'));
+		add_shortcode('order_check_price', array($this, 'render_order_check_price'));
 	}
 
 	/**
@@ -98,6 +99,22 @@ class Ship_Us_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ship-us-public.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	public function render_search_box() {
+		ob_start();
+		if(isset($_GET['order_no'])) {
+			$order = Ship_Order_Model::get_order_by('ma_order', $_GET['order_no']);
+			$logs = Ship_Logs_Model::get_logs_by('order_id', $order->id);
+		}
+		include_once dirname(__FILE__) . '/partials/ship-us-public-display.php';
+		return ob_get_clean();
+	}
+
+	public function render_order_check_price() {
+		ob_start();
+		include_once dirname(__FILE__) . '/partials/ship-us-order-check.php';
+		return ob_get_clean();
 	}
 
 }
